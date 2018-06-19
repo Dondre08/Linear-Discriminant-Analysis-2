@@ -59,7 +59,7 @@ for ax, cnt in zip(axes.ravel(), range(4)):
 
     # hide axis ticks
     ax.tick_params(axis="both", which="both", bottom="off", top="off",
-                   labelbottom="on", left="off", right="off", labelleft="on")
+                    labelbottom="on", left="off", right="off", labelleft="on")
 
     # remove axis spines
     ax.spines["top"].set_visible(False)
@@ -73,3 +73,22 @@ axes[1][0].set_ylabel('count')
 fig.tight_layout()
 
 plt.show()
+
+
+# Step 1: Computing the d-dimensional mean vectors
+np.set_printoptions(precision=4)
+mean_vectors = []
+for cl in range(1,4):
+    mean_vectors.append(np.mean(X[y==cl], axis=0))
+    print('Mean Vector class %s: %s\n' %(cl, mean_vectors[cl-1]))
+
+# Step 2: Computing the Scatter Matrices
+
+S_W = np.zeros((4,4))
+for cl,mv in zip(range(1,4), mean_vectors):
+    class_sc_mat = np.zeros((4,4))                  # scatter matrix for every class
+    for row in X[y == cl]:
+        row, mv = row.reshape(4,1), mv.reshape(4,1) # make column vectors
+        class_sc_mat += (row-mv).dot((row-mv).T)
+    S_W += class_sc_mat                             # sum class scatter matrices
+print('within-class Scatter Matrix:\n', S_W)
